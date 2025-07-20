@@ -22,45 +22,52 @@
       return { headers, rows };
     }
 
-    async function drawChart() {
-  //getting the URL
-      const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvp9eL1e2kY-x7FkanpGxB3WgWAqn9e90VpE85J5PR70IIMVPOT1bFECAtbe2YVKE1bqiF5nioy3XO/pub?output=csv';
-//getting the CSV
-      const csvText = await fetchCSV(csvUrl);
-      const { headers, rows } = parseCSV(csvText);
+   async function drawChart() {
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvp9eL1e2kY-x7FkanpGxB3WgWAqn9e90VpE85J5PR70IIMVPOT1bFECAtbe2YVKE1bqiF5nioy3XO/pub?output=csv';
+  const csvText = await fetchCSV(csvUrl);
+  const { headers, rows } = parseCSV(csvText);
 
-      const titleIdx = headers.indexOf('Title');
-      const noteCountIdx = headers.indexOf('NoteCount');
+  console.log('Headers:', headers);
+  console.log('Rows sample:', rows.slice(0, 3));
 
-      const labels = rows.map(row => row[titleIdx]);
-      const data = rows.map(row => Number(row[noteCountIdx]));
+  const titleIdx = headers.indexOf('Title');
+  const noteCountIdx = headers.indexOf('NoteCount');
 
-      const ctx = document.getElementById('noteCountChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Note Count',
-            data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          }]
-        },
+  if (titleIdx === -1 || noteCountIdx === -1) {
+    console.error('CSV headers missing "Title" or "NoteCount"');
+    return;
+  }
 
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+  const labels = rows.map(row => row[titleIdx]);
+  const data = rows.map(row => Number(row[noteCountIdx]));
+  console.log('Data:', data);
+
+  const ctx = document.getElementById('noteCountChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Note Count',
+        data: data,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
         }
-      });
+      }
     }
+  });
+}
 
-    drawChart();
+drawChart();
+
   </script>
 </body>
 </html>
