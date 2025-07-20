@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fanfic Note Count Comparison</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Current Note Count Comparison</h2>
+  <canvas id="noteCountChart" width="800" height="400"></canvas>
+
+  <script>
+    async function fetchCSV(url) {
+      const res = await fetch(url);
+      const text = await res.text();
+      return text;
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(',');
+      const rows = lines.slice(1).map(line => line.split(','));
+      return { headers, rows };
+    }
+
+    async function drawChart() {
+  //getting the URL
+      const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvp9eL1e2kY-x7FkanpGxB3WgWAqn9e90VpE85J5PR70IIMVPOT1bFECAtbe2YVKE1bqiF5nioy3XO/pub?output=csv';
+//getting the CSV
+      const csvText = await fetchCSV(csvUrl);
+      const { headers, rows } = parseCSV(csvText);
+
+      const titleIdx = headers.indexOf('Title');
+      const noteCountIdx = headers.indexOf('NoteCount');
+
+      const labels = rows.map(row => row[titleIdx]);
+      const data = rows.map(row => Number(row[noteCountIdx]));
+
+      const ctx = document.getElementById('noteCountChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Note Count',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    drawChart();
+  </script>
+</body>
+</html>
