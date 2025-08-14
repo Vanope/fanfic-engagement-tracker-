@@ -71,6 +71,11 @@
   console.log('Data:', data);
 
   const ctx = document.getElementById('noteCountChart').getContext('2d');
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, '#B8C5A6'); // light sage
+      gradient.addColorStop(1, '#9CAF88'); // sage green
+
   new Chart(ctx, {
     type: 'bar',
     data: {
@@ -78,22 +83,53 @@
       datasets: [{
         label: 'Note Count',
         data: data,
-        backgroundColor: '#9CAF88',
-        borderColor: '#9CAF88',      // same color for border
-
-        borderWidth: 1
+       backgroundColor: gradient,
+        borderColor: '#7A8B6B',
+        borderWidth: 1,
+        borderRadius: 12,  // Rounded bars
+        hoverBackgroundColor: '#7A8B6B'     
       }]
+      
     },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
+   options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                font: { size: 14 },
+                color: '#2D3319'
+              }
+            },
+            title: {
+              display: true,
+              text: "Fanfic Note Counts",
+              font: { size: 20, weight: '600' },
+              color: '#2D3319',
+              padding: { bottom: 20 }
+            },
+            tooltip: {
+              backgroundColor: '#F5F3E7',
+              titleColor: '#2D3319',
+              bodyColor: '#2D3319',
+              borderColor: '#9CAF88',
+              borderWidth: 1,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#2D3319', font: { size: 12 } },
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#2D3319', font: { size: 12 } },
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            }
+          }
         }
-      }
+      });
     }
-  });
-}
 
 drawChart();
 
